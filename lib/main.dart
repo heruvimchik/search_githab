@@ -1,4 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
+import 'domain/api_client/github_client.dart';
+import 'domain/repositories/github_repository.dart';
+import 'presentation/search_screen/search_bloc/search_bloc.dart';
+import 'presentation/search_screen/search_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -9,10 +15,28 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+    return MultiProvider(
+      providers: [
+        Provider<GithubRepository>(
+          lazy: false,
+          create: (context) => GithubRepository(
+            githubClient: GithubClient(),
+          ),
+        ),
+        BlocProvider<SearchBloc>(
+          create: (BuildContext context) => SearchBloc(
+            githubRepository: context.read<GithubRepository>(),
+          ),
+        ),
+      ],
+      child: MaterialApp(
+        title: '',
+        theme: ThemeData(
+          appBarTheme: const AppBarTheme(
+            backgroundColor: Color.fromRGBO(3, 37, 65, 1),
+          ),
+        ),
+        home: const SearchScreen(),
       ),
     );
   }
