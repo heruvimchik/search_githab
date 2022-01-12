@@ -39,14 +39,14 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
 }
 
 @freezed
-abstract class SearchEvent with _$SearchEvent {
+class SearchEvent with _$SearchEvent {
   const factory SearchEvent.changeText(String text) = ChangeText;
 }
 
 @freezed
-abstract class SearchState with _$SearchState {
+class SearchState with _$SearchState {
   const factory SearchState.initial() = Initial;
   const factory SearchState.loading() = Loading;
-  const factory SearchState.success(List<User> users) = Success;
+  const factory SearchState.success(List<UserFollowers> users) = Success;
   const factory SearchState.error(String error) = Error;
 }

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:search_githab/presentation/repositories_screen/repositories_bloc/repositories_bloc.dart';
+import 'package:search_githab/presentation/repositories_screen/repositories_screen.dart';
 
 import 'search_bloc/search_bloc.dart';
 
@@ -74,23 +76,39 @@ class _SearchBody extends StatelessWidget {
                   elevation: 2,
                   child: ListTile(
                     title: Text(
-                      users[index].login,
+                      users[index].user.login,
                       style: const TextStyle(color: Colors.blue),
                     ),
                     leading: SizedBox(
-                      height: 120,
-                      child: Image.network(users[index].avatarUrl),
+                      height: 100,
+                      width: 70,
+                      //child: Image.network(users[index].user.avatarUrl),
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          image: DecorationImage(
+                            fit: BoxFit.cover,
+                            image: NetworkImage(
+                              users[index].user.avatarUrl,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    subtitle: Text(
+                      'Followers: ${users[index].followers}',
                     ),
                     onTap: () {
-                      // context.read<PostsCubit>().loadPosts(users[index].id);
-                      //
-                      // Navigator.of(context).push(
-                      //   MaterialPageRoute(
-                      //     builder: (context) => UserScreen(
-                      //       user: users[index],
-                      //     ),
-                      //   ),
-                      // );
+                      context.read<RepositoriesBloc>().add(
+                          RepositoriesEvent.getRepo(users[index].user.login));
+
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => RepositoriesScreen(
+                            name: users[index].user.login,
+                          ),
+                        ),
+                      );
                     },
                   ),
                 );

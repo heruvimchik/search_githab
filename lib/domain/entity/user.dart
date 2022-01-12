@@ -17,3 +17,13 @@ class User {
 
   Map<String, dynamic> toJson() => _$UserToJson(this);
 }
+
+class UserFollowers {
+  final User user;
+  final int followers;
+
+  UserFollowers({
+    required this.user,
+    required this.followers,
+  });
+}
