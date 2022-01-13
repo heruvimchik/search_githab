@@ -31,7 +31,7 @@ class RepositoriesScreen extends StatelessWidget {
                           repos[index].name,
                         ),
                         Text(
-                          repos[index].description,
+                          repos[index].description ?? '',
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -40,6 +40,12 @@ class RepositoriesScreen extends StatelessWidget {
                         ),
                         Text(
                           '${repos[index].stargazersCount}',
+                        ),
+                        Text(
+                          repos[index].language ?? '',
+                        ),
+                        Text(
+                          repos[index].defaultBranch,
                         ),
                       ],
                     ),

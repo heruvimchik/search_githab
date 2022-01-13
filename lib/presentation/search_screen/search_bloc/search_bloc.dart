@@ -29,9 +29,20 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
 
     emit(const SearchState.loading());
 
+    final List<UserFollowers> userFollowers = [];
     try {
       final users = await githubRepository.getUsers(event.text);
-      emit(SearchState.success(users));
+
+      if (users.isEmpty) emit(SearchState.success(userFollowers));
+
+      for (User user in users) {
+        final followers =
+            await githubRepository.getFollowers(user.followersUrl);
+
+        userFollowers.add(UserFollowers(user: user, followers: followers));
+
+        emit(SearchState.success(List.from(userFollowers)));
+      }
     } on ApiClientException catch (e) {
       emit(SearchState.error(e.type));
     }

@@ -19,6 +19,11 @@ dependencies:
   dio: ^4.0.4
   provider: ^6.0.2
 
+  firebase_core: ^1.11.0
+  firebase_auth: ^3.3.5
+  url_launcher: ^6.0.18
+  uni_links: ^0.5.1
+
   cupertino_icons: ^1.0.2
 
 dev_dependencies:

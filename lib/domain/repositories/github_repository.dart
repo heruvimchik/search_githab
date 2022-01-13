@@ -8,15 +8,25 @@ class GithubRepository {
   GithubRepository({required GithubClient githubClient})
       : _githubClient = githubClient;
 
-  Future<List<UserFollowers>> getUsers(String username) async {
+  Future<List<User>> getUsers(String username) async {
     final users = await _githubClient.searchUsers(username);
-
     return users;
+  }
+
+  Future<int> getFollowers(String url) async {
+    final followers = await _githubClient.followers(url);
+    return followers;
   }
 
   Future<List<Repository>> getRepositories(String username) async {
     final repositories = await _githubClient.loadRepos(username);
 
     return repositories;
+  }
+
+  Future<User> loginWithGitHub(String code) async {
+    await _githubClient.login(code);
+    final user = await _githubClient.getUser();
+    return user;
   }
 }

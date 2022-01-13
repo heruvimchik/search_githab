@@ -1,9 +1,11 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
+import 'package:search_githab/domain/entity/github_login.dart';
 import 'package:search_githab/domain/entity/repository.dart';
 import 'package:search_githab/domain/entity/user.dart';
 
 import 'api_client_exception.dart';
+import 'secret_keys.dart';
 
 class GithubClient {
   late final Dio _dio = Dio(
@@ -13,74 +15,107 @@ class GithubClient {
         headers: {HttpHeaders.acceptHeader: 'application/vnd.github.v3+json'}),
   );
 
+  GitHubLoginResponse _loginResponse =
+      GitHubLoginResponse(accessToken: '', scope: '', tokenType: '');
+
   GithubClient();
 
   //final Map<String, String> _bufFollowers = {};
 
-  Future<List<UserFollowers>> searchUsers(String username) async {
+  Future<T> _get<T>(
+    String path,
+    T Function(dynamic json) parser, [
+    Map<String, dynamic>? parameters,
+  ]) async {
     try {
-      var response = await _dio.get(
-        'search/users',
-        queryParameters: {'q': username, 'per_page': 1},
+      final response = await _dio.get(
+        path,
+        queryParameters: parameters,
       );
-      //print(response.statusCode);
       _validateResponse(response.statusCode);
-
-      final List<dynamic> data = response.data['items'];
-      final users = data.map((user) => User.fromJson(user)).toList();
-
-      final List<UserFollowers> userFollowers = [];
-      for (User user in users) {
-        response = await _dio.get(
-          user.followersUrl,
-          queryParameters: {'per_page': 100},
-        );
-        //_bufFollowers[user.login] = response.headers['etag'];
-        _validateResponse(response.statusCode);
-        //print(response.headers);
-
-        final List<dynamic> followersList = response.data;
-        userFollowers
-            .add(UserFollowers(user: user, followers: followersList.length));
-      }
-
-      return userFollowers;
+      final result = parser(response.data);
+      return result;
     } on SocketException {
       throw ApiClientException(ApiClientExceptionType.noInternetConnection);
     } on ApiClientException {
       rethrow;
     } on DioError catch (e) {
-      throw ApiClientException(e.message);
+      if (e.type == DioErrorType.response && e.response?.statusCode == 403) {
+        throw ApiClientException(ApiClientExceptionType.unauthorisedRequest);
+      } else {
+        throw ApiClientException(e.message);
+      }
     } catch (e) {
       throw ApiClientException(ApiClientExceptionType.unknownError);
     }
   }
 
-  Future<List<Repository>> loadRepos(String username) async {
-    try {
-      var response = await _dio.get(
-        'users/$username/repos',
-        queryParameters: {'per_page': 50},
-      );
+  Future<List<User>> searchUsers(String username) async {
+    List<User> parser(dynamic json) {
+      final List<dynamic> data = json['items'];
 
-      print(response.data);
-      _validateResponse(response.statusCode);
-
-      final List<dynamic> data = response.data;
-
-      final repositories =
-          data.map((repository) => Repository.fromJson(repository)).toList();
-
-      return repositories;
-    } on SocketException {
-      throw ApiClientException(ApiClientExceptionType.noInternetConnection);
-    } on ApiClientException {
-      rethrow;
-    } on DioError catch (e) {
-      throw ApiClientException(e.message);
-    } catch (e) {
-      throw ApiClientException(ApiClientExceptionType.unknownError);
+      final users = data.map((user) => User.fromJson(user)).toList();
+      return users;
     }
+
+    final result =
+        await _get('search/users', parser, {'q': username, 'per_page': 1});
+    return result;
+  }
+
+  Future<int> followers(String followersUrl) async {
+    int parser(dynamic json) {
+      final List<dynamic> followersList = json;
+      return followersList.length;
+    }
+
+    final result = await _get(
+      followersUrl,
+      parser,
+      {'per_page': 100},
+    );
+    return result;
+  }
+
+  Future<List<Repository>> loadRepos(String username) async {
+    List<Repository> parser(dynamic json) {
+      final List<dynamic> data = json;
+
+      final repos =
+          data.map((repository) => Repository.fromJson(repository)).toList();
+      return repos;
+    }
+
+    final result =
+        await _get('users/$username/repos', parser, {'per_page': 30});
+
+    //print(result[0].updatedAt);
+
+    return result;
+  }
+
+  Future<User> getUser() async {
+    User parser(dynamic json) {
+      final user = User.fromJson(json);
+      return user;
+    }
+
+    final result = await _get('user', parser,
+        {'Authorization': 'token ${_loginResponse.accessToken}'});
+    return result;
+  }
+
+  Future<void> login(String code) async {
+    final gitHubLoginRequest = GitHubLoginRequest(
+        clientId: GitHubKeys.githubClientId,
+        clientSecret: GitHubKeys.githubClientSecret,
+        code: code);
+
+    final response = await _dio.post(
+        'https://github.com/login/oauth/access_token',
+        queryParameters: gitHubLoginRequest.toJson());
+
+    _loginResponse = GitHubLoginResponse.fromJson(response.data);
   }
 
   void _validateResponse(int? statusCode) {

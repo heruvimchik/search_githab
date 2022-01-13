@@ -1,13 +1,17 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:search_githab/presentation/repositories_screen/repositories_bloc/repositories_bloc.dart';
 import 'domain/api_client/github_client.dart';
 import 'domain/repositories/github_repository.dart';
+import 'presentation/auth_screen/auth_bloc/auth_bloc.dart';
 import 'presentation/search_screen/search_bloc/search_bloc.dart';
 import 'presentation/search_screen/search_screen.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(const MyApp());
 }
 
@@ -31,6 +35,12 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider<RepositoriesBloc>(
           create: (BuildContext context) => RepositoriesBloc(
+            githubRepository: context.read<GithubRepository>(),
+          ),
+        ),
+        BlocProvider<AuthBloc>(
+          lazy: false,
+          create: (BuildContext context) => AuthBloc(
             githubRepository: context.read<GithubRepository>(),
           ),
         ),
