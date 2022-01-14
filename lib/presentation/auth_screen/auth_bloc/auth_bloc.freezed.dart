@@ -18,8 +18,10 @@ final _privateConstructorUsedError = UnsupportedError(
 class _$AuthEventTearOff {
   const _$AuthEventTearOff();
 
-  SignIn signIn() {
-    return const SignIn();
+  SignIn signIn(String code) {
+    return SignIn(
+      code,
+    );
   }
 }
 
@@ -28,19 +30,21 @@ const $AuthEvent = _$AuthEventTearOff();
 
 /// @nodoc
 mixin _$AuthEvent {
+  String get code => throw _privateConstructorUsedError;
+
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function() signIn,
+    required TResult Function(String code) signIn,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult Function()? signIn,
+    TResult Function(String code)? signIn,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? signIn,
+    TResult Function(String code)? signIn,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -60,12 +64,17 @@ mixin _$AuthEvent {
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
+
+  @JsonKey(ignore: true)
+  $AuthEventCopyWith<AuthEvent> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
 abstract class $AuthEventCopyWith<$Res> {
   factory $AuthEventCopyWith(AuthEvent value, $Res Function(AuthEvent) then) =
       _$AuthEventCopyWithImpl<$Res>;
+  $Res call({String code});
 }
 
 /// @nodoc
@@ -75,12 +84,26 @@ class _$AuthEventCopyWithImpl<$Res> implements $AuthEventCopyWith<$Res> {
   final AuthEvent _value;
   // ignore: unused_field
   final $Res Function(AuthEvent) _then;
+
+  @override
+  $Res call({
+    Object? code = freezed,
+  }) {
+    return _then(_value.copyWith(
+      code: code == freezed
+          ? _value.code
+          : code // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
 }
 
 /// @nodoc
-abstract class $SignInCopyWith<$Res> {
+abstract class $SignInCopyWith<$Res> implements $AuthEventCopyWith<$Res> {
   factory $SignInCopyWith(SignIn value, $Res Function(SignIn) then) =
       _$SignInCopyWithImpl<$Res>;
+  @override
+  $Res call({String code});
 }
 
 /// @nodoc
@@ -91,51 +114,74 @@ class _$SignInCopyWithImpl<$Res> extends _$AuthEventCopyWithImpl<$Res>
 
   @override
   SignIn get _value => super._value as SignIn;
+
+  @override
+  $Res call({
+    Object? code = freezed,
+  }) {
+    return _then(SignIn(
+      code == freezed
+          ? _value.code
+          : code // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
 }
 
 /// @nodoc
 
 class _$SignIn implements SignIn {
-  const _$SignIn();
+  const _$SignIn(this.code);
+
+  @override
+  final String code;
 
   @override
   String toString() {
-    return 'AuthEvent.signIn()';
+    return 'AuthEvent.signIn(code: $code)';
   }
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is SignIn);
+        (other.runtimeType == runtimeType &&
+            other is SignIn &&
+            const DeepCollectionEquality().equals(other.code, code));
   }
 
   @override
-  int get hashCode => runtimeType.hashCode;
+  int get hashCode =>
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(code));
+
+  @JsonKey(ignore: true)
+  @override
+  $SignInCopyWith<SignIn> get copyWith =>
+      _$SignInCopyWithImpl<SignIn>(this, _$identity);
 
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function() signIn,
+    required TResult Function(String code) signIn,
   }) {
-    return signIn();
+    return signIn(code);
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult Function()? signIn,
+    TResult Function(String code)? signIn,
   }) {
-    return signIn?.call();
+    return signIn?.call(code);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? signIn,
+    TResult Function(String code)? signIn,
     required TResult orElse(),
   }) {
     if (signIn != null) {
-      return signIn();
+      return signIn(code);
     }
     return orElse();
   }
@@ -170,7 +216,13 @@ class _$SignIn implements SignIn {
 }
 
 abstract class SignIn implements AuthEvent {
-  const factory SignIn() = _$SignIn;
+  const factory SignIn(String code) = _$SignIn;
+
+  @override
+  String get code;
+  @override
+  @JsonKey(ignore: true)
+  $SignInCopyWith<SignIn> get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc

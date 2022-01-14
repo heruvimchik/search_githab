@@ -20,7 +20,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<SignIn>(
       _onSignIn,
     );
-    add(AuthEvent.signIn());
   }
 
   void _onSignIn(
@@ -29,33 +28,38 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   ) async {
     emit(const AuthState.loading());
 
-    const String url = "https://github.com/login/oauth/authorize?client_id=" +
-        GitHubKeys.githubClientId +
-        "&scope=user:email";
-    //"&scope=public_repo%20read:user%20user:email";
-
-    _subs = linkStream.listen(
-      (String? link) {
-        _subs?.cancel();
-        _checkDeepLink(link, emit);
-      },
-      cancelOnError: true,
-    );
-
-    if (await canLaunch(url)) {
-      await launch(
-        url,
-        forceSafariVC: false,
-        forceWebView: false,
-      );
-    } else {
-      _subs?.cancel();
-      emit(const AuthState.error('Cannot launch url!'));
-      return;
-    }
+    // const String url = "https://github.com/login/oauth/authorize?client_id=" +
+    //     GitHubKeys.githubClientId +
+    //     "&scope=user:email";
+    // //"&scope=public_repo%20read:user%20user:email";
+    //
+    // _subs = linkStream.listen(
+    //     (String? link) async {
+    //       _subs?.cancel();
+    //       _checkDeepLink(link, emit);
+    //     },
+    //     cancelOnError: true,
+    //     onError: (e) {
+    //       print(e);
+    //     });
+    //
+    // if (await canLaunch(url)) {
+    //   await launch(
+    //     url,
+    //     forceSafariVC: false,
+    //     forceWebView: true,
+    //     //enableDomStorage: true,
+    //     enableJavaScript: true,
+    //   );
+    // } else {
+    //   _subs?.cancel();
+    //   emit(const AuthState.error('Cannot launch url!'));
+    //   return;
+    // }
   }
 
   void _checkDeepLink(String? link, Emitter<AuthState> emit) async {
+    print(link);
     if (link != null) {
       String code = link.substring(link.indexOf(RegExp('code=')) + 5);
 
@@ -78,7 +82,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
 @freezed
 class AuthEvent with _$AuthEvent {
-  const factory AuthEvent.signIn() = SignIn;
+  const factory AuthEvent.signIn(String code) = SignIn;
 }
 
 @freezed

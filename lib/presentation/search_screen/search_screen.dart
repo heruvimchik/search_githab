@@ -1,12 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:search_githab/domain/api_client/secret_keys.dart';
 import 'package:search_githab/presentation/repositories_screen/repositories_bloc/repositories_bloc.dart';
 import 'package:search_githab/presentation/repositories_screen/repositories_screen.dart';
 
 import 'search_bloc/search_bloc.dart';
 
 class SearchScreen extends StatelessWidget {
-  const SearchScreen({Key? key}) : super(key: key);
+  SearchScreen({Key? key}) : super(key: key);
+  // final GitHubSignIn gitHubSignIn = GitHubSignIn(
+  //   clientId: GitHubKeys.githubClientId,
+  //   clientSecret: GitHubKeys.githubClientSecret,
+  //   redirectUrl: 'https://githabsearch.firebaseapp.com/__/auth/handler',
+  //   title: 'GitHub Connection',
+  //   centerTitle: false,
+  // );
 
   @override
   Widget build(BuildContext context) {

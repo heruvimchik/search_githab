@@ -6,6 +6,7 @@ import 'package:search_githab/presentation/repositories_screen/repositories_bloc
 import 'domain/api_client/github_client.dart';
 import 'domain/repositories/github_repository.dart';
 import 'presentation/auth_screen/auth_bloc/auth_bloc.dart';
+import 'presentation/auth_screen/auth_screen.dart';
 import 'presentation/search_screen/search_bloc/search_bloc.dart';
 import 'presentation/search_screen/search_screen.dart';
 
@@ -52,7 +53,50 @@ class MyApp extends StatelessWidget {
             backgroundColor: Color.fromRGBO(3, 37, 65, 1),
           ),
         ),
-        home: const SearchScreen(),
+        home: const HomeWidget(),
+      ),
+    );
+  }
+}
+
+class HomeWidget extends StatefulWidget {
+  const HomeWidget({Key? key}) : super(key: key);
+
+  @override
+  _HomeWidgetState createState() => _HomeWidgetState();
+}
+
+class _HomeWidgetState extends State<HomeWidget> {
+  int _selectedTab = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: IndexedStack(
+        index: _selectedTab,
+        children: [
+          SearchScreen(),
+          AuthScreen(),
+        ],
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedTab,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.search),
+            label: 'Search',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.login),
+            label: 'Sign In',
+          ),
+        ],
+        onTap: (value) {
+          if (_selectedTab == value) return;
+          setState(() {
+            _selectedTab = value;
+          });
+        },
       ),
     );
   }

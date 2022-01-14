@@ -114,6 +114,7 @@ class GithubClient {
     final response = await _dio.post(
         'https://github.com/login/oauth/access_token',
         queryParameters: gitHubLoginRequest.toJson());
+    print(response.data);
 
     _loginResponse = GitHubLoginResponse.fromJson(response.data);
   }
