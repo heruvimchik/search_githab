@@ -23,6 +23,10 @@ class _$AuthEventTearOff {
       code,
     );
   }
+
+  SignOut signOut() {
+    return const SignOut();
+  }
 }
 
 /// @nodoc
@@ -30,43 +34,43 @@ const $AuthEvent = _$AuthEventTearOff();
 
 /// @nodoc
 mixin _$AuthEvent {
-  String get code => throw _privateConstructorUsedError;
-
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(String code) signIn,
+    required TResult Function() signOut,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult Function(String code)? signIn,
+    TResult Function()? signOut,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String code)? signIn,
+    TResult Function()? signOut,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(SignIn value) signIn,
+    required TResult Function(SignOut value) signOut,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult Function(SignIn value)? signIn,
+    TResult Function(SignOut value)? signOut,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(SignIn value)? signIn,
+    TResult Function(SignOut value)? signOut,
     required TResult orElse(),
   }) =>
-      throw _privateConstructorUsedError;
-
-  @JsonKey(ignore: true)
-  $AuthEventCopyWith<AuthEvent> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -74,7 +78,6 @@ mixin _$AuthEvent {
 abstract class $AuthEventCopyWith<$Res> {
   factory $AuthEventCopyWith(AuthEvent value, $Res Function(AuthEvent) then) =
       _$AuthEventCopyWithImpl<$Res>;
-  $Res call({String code});
 }
 
 /// @nodoc
@@ -84,25 +87,12 @@ class _$AuthEventCopyWithImpl<$Res> implements $AuthEventCopyWith<$Res> {
   final AuthEvent _value;
   // ignore: unused_field
   final $Res Function(AuthEvent) _then;
-
-  @override
-  $Res call({
-    Object? code = freezed,
-  }) {
-    return _then(_value.copyWith(
-      code: code == freezed
-          ? _value.code
-          : code // ignore: cast_nullable_to_non_nullable
-              as String,
-    ));
-  }
 }
 
 /// @nodoc
-abstract class $SignInCopyWith<$Res> implements $AuthEventCopyWith<$Res> {
+abstract class $SignInCopyWith<$Res> {
   factory $SignInCopyWith(SignIn value, $Res Function(SignIn) then) =
       _$SignInCopyWithImpl<$Res>;
-  @override
   $Res call({String code});
 }
 
@@ -162,6 +152,7 @@ class _$SignIn implements SignIn {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(String code) signIn,
+    required TResult Function() signOut,
   }) {
     return signIn(code);
   }
@@ -170,6 +161,7 @@ class _$SignIn implements SignIn {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult Function(String code)? signIn,
+    TResult Function()? signOut,
   }) {
     return signIn?.call(code);
   }
@@ -178,6 +170,7 @@ class _$SignIn implements SignIn {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String code)? signIn,
+    TResult Function()? signOut,
     required TResult orElse(),
   }) {
     if (signIn != null) {
@@ -190,6 +183,7 @@ class _$SignIn implements SignIn {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(SignIn value) signIn,
+    required TResult Function(SignOut value) signOut,
   }) {
     return signIn(this);
   }
@@ -198,6 +192,7 @@ class _$SignIn implements SignIn {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult Function(SignIn value)? signIn,
+    TResult Function(SignOut value)? signOut,
   }) {
     return signIn?.call(this);
   }
@@ -206,6 +201,7 @@ class _$SignIn implements SignIn {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(SignIn value)? signIn,
+    TResult Function(SignOut value)? signOut,
     required TResult orElse(),
   }) {
     if (signIn != null) {
@@ -218,11 +214,111 @@ class _$SignIn implements SignIn {
 abstract class SignIn implements AuthEvent {
   const factory SignIn(String code) = _$SignIn;
 
-  @override
   String get code;
-  @override
   @JsonKey(ignore: true)
   $SignInCopyWith<SignIn> get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $SignOutCopyWith<$Res> {
+  factory $SignOutCopyWith(SignOut value, $Res Function(SignOut) then) =
+      _$SignOutCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class _$SignOutCopyWithImpl<$Res> extends _$AuthEventCopyWithImpl<$Res>
+    implements $SignOutCopyWith<$Res> {
+  _$SignOutCopyWithImpl(SignOut _value, $Res Function(SignOut) _then)
+      : super(_value, (v) => _then(v as SignOut));
+
+  @override
+  SignOut get _value => super._value as SignOut;
+}
+
+/// @nodoc
+
+class _$SignOut implements SignOut {
+  const _$SignOut();
+
+  @override
+  String toString() {
+    return 'AuthEvent.signOut()';
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is SignOut);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(String code) signIn,
+    required TResult Function() signOut,
+  }) {
+    return signOut();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult Function(String code)? signIn,
+    TResult Function()? signOut,
+  }) {
+    return signOut?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String code)? signIn,
+    TResult Function()? signOut,
+    required TResult orElse(),
+  }) {
+    if (signOut != null) {
+      return signOut();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(SignIn value) signIn,
+    required TResult Function(SignOut value) signOut,
+  }) {
+    return signOut(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult Function(SignIn value)? signIn,
+    TResult Function(SignOut value)? signOut,
+  }) {
+    return signOut?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(SignIn value)? signIn,
+    TResult Function(SignOut value)? signOut,
+    required TResult orElse(),
+  }) {
+    if (signOut != null) {
+      return signOut(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class SignOut implements AuthEvent {
+  const factory SignOut() = _$SignOut;
 }
 
 /// @nodoc

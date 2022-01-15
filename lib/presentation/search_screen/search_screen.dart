@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:search_githab/domain/api_client/secret_keys.dart';
 import 'package:search_githab/presentation/repositories_screen/repositories_bloc/repositories_bloc.dart';
 import 'package:search_githab/presentation/repositories_screen/repositories_screen.dart';
 
@@ -8,13 +7,6 @@ import 'search_bloc/search_bloc.dart';
 
 class SearchScreen extends StatelessWidget {
   SearchScreen({Key? key}) : super(key: key);
-  // final GitHubSignIn gitHubSignIn = GitHubSignIn(
-  //   clientId: GitHubKeys.githubClientId,
-  //   clientSecret: GitHubKeys.githubClientSecret,
-  //   redirectUrl: 'https://githabsearch.firebaseapp.com/__/auth/handler',
-  //   title: 'GitHub Connection',
-  //   centerTitle: false,
-  // );
 
   @override
   Widget build(BuildContext context) {
@@ -47,9 +39,14 @@ class _SearchBarState extends State<_SearchBar> {
   @override
   Widget build(BuildContext context) {
     return TextField(
-      autofocus: true,
+      //autofocus: true,
       controller: _textController,
       autocorrect: false,
+      onSubmitted: (text) {
+        context.read<SearchBloc>().add(
+              SearchEvent.changeText(text),
+            );
+      },
       onChanged: (text) {
         context.read<SearchBloc>().add(
               SearchEvent.changeText(text),
@@ -95,7 +92,7 @@ class _SearchBody extends StatelessWidget {
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           image: DecorationImage(
-                            fit: BoxFit.cover,
+                            fit: BoxFit.scaleDown,
                             image: NetworkImage(
                               users[index].user.avatarUrl,
                             ),

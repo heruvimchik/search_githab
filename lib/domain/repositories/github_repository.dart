@@ -20,7 +20,6 @@ class GithubRepository {
 
   Future<List<Repository>> getRepositories(String username) async {
     final repositories = await _githubClient.loadRepos(username);
-
     return repositories;
   }
 
@@ -28,5 +27,9 @@ class GithubRepository {
     await _githubClient.login(code);
     final user = await _githubClient.getUser();
     return user;
+  }
+
+  void logoutGitHub() {
+    _githubClient.logout();
   }
 }

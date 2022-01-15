@@ -1,4 +1,3 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
@@ -11,8 +10,6 @@ import 'presentation/search_screen/search_bloc/search_bloc.dart';
 import 'presentation/search_screen/search_screen.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
   runApp(const MyApp());
 }
 
@@ -76,7 +73,7 @@ class _HomeWidgetState extends State<HomeWidget> {
         index: _selectedTab,
         children: [
           SearchScreen(),
-          AuthScreen(),
+          const AuthScreen(),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -87,11 +84,12 @@ class _HomeWidgetState extends State<HomeWidget> {
             label: 'Search',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.login),
-            label: 'Sign In',
+            icon: Icon(Icons.account_circle),
+            label: 'Account',
           ),
         ],
         onTap: (value) {
+          FocusManager.instance.primaryFocus?.unfocus();
           if (_selectedTab == value) return;
           setState(() {
             _selectedTab = value;

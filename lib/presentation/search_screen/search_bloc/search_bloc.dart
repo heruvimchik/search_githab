@@ -18,6 +18,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
       : super(const SearchState.initial()) {
     on<ChangeText>(_onTextChanged, transformer: debounce(_duration));
   }
+  String _text = '';
 
   final GithubRepository githubRepository;
 
@@ -25,7 +26,9 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     ChangeText event,
     Emitter<SearchState> emit,
   ) async {
-    if (event.text.isEmpty) return;
+    if (event.text.isEmpty || event.text == _text) return;
+
+    _text = event.text;
 
     emit(const SearchState.loading());
 

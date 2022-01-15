@@ -8,7 +8,7 @@ import 'api_client_exception.dart';
 import 'secret_keys.dart';
 
 class GithubClient {
-  late final Dio _dio = Dio(
+  final Dio _dio = Dio(
     BaseOptions(
         connectTimeout: 5000,
         baseUrl: 'https://api.github.com/',
@@ -27,10 +27,17 @@ class GithubClient {
     T Function(dynamic json) parser, [
     Map<String, dynamic>? parameters,
   ]) async {
+    Options? options;
+    if (_loginResponse.accessToken.isNotEmpty) {
+      options = Options(
+        headers: {'Authorization': 'token ${_loginResponse.accessToken}'},
+      );
+    }
     try {
       final response = await _dio.get(
         path,
         queryParameters: parameters,
+        options: options,
       );
       _validateResponse(response.statusCode);
       final result = parser(response.data);
@@ -53,13 +60,12 @@ class GithubClient {
   Future<List<User>> searchUsers(String username) async {
     List<User> parser(dynamic json) {
       final List<dynamic> data = json['items'];
-
       final users = data.map((user) => User.fromJson(user)).toList();
       return users;
     }
 
     final result =
-        await _get('search/users', parser, {'q': username, 'per_page': 1});
+        await _get('search/users', parser, {'q': username, 'per_page': 30});
     return result;
   }
 
@@ -80,7 +86,6 @@ class GithubClient {
   Future<List<Repository>> loadRepos(String username) async {
     List<Repository> parser(dynamic json) {
       final List<dynamic> data = json;
-
       final repos =
           data.map((repository) => Repository.fromJson(repository)).toList();
       return repos;
@@ -88,9 +93,6 @@ class GithubClient {
 
     final result =
         await _get('users/$username/repos', parser, {'per_page': 30});
-
-    //print(result[0].updatedAt);
-
     return result;
   }
 
@@ -100,8 +102,7 @@ class GithubClient {
       return user;
     }
 
-    final result = await _get('user', parser,
-        {'Authorization': 'token ${_loginResponse.accessToken}'});
+    final result = await _get('user', parser);
     return result;
   }
 
@@ -111,20 +112,37 @@ class GithubClient {
         clientSecret: GitHubKeys.githubClientSecret,
         code: code);
 
-    final response = await _dio.post(
-        'https://github.com/login/oauth/access_token',
-        queryParameters: gitHubLoginRequest.toJson());
-    print(response.data);
+    try {
+      final response = await _dio.post(
+          'https://github.com/login/oauth/access_token',
+          queryParameters: gitHubLoginRequest.toJson());
+      _validateResponse(response.statusCode);
 
-    _loginResponse = GitHubLoginResponse.fromJson(response.data);
+      _loginResponse = GitHubLoginResponse.fromJson(response.data);
+    } on SocketException {
+      throw ApiClientException(ApiClientExceptionType.noInternetConnection);
+    } on ApiClientException {
+      rethrow;
+    } on DioError catch (e) {
+      if (e.type == DioErrorType.response && e.response?.statusCode == 403) {
+        throw ApiClientException(ApiClientExceptionType.unauthorisedRequest);
+      } else {
+        throw ApiClientException(e.message);
+      }
+    } catch (e) {
+      throw ApiClientException(ApiClientExceptionType.unknownError);
+    }
+  }
+
+  void logout() {
+    _loginResponse =
+        GitHubLoginResponse(accessToken: '', scope: '', tokenType: '');
   }
 
   void _validateResponse(int? statusCode) {
     if (statusCode == 200) return;
 
     switch (statusCode) {
-      case 304:
-        throw ApiClientException(ApiClientExceptionType.notModified);
       case 403:
         throw ApiClientException(ApiClientExceptionType.unauthorisedRequest);
       case 422:
